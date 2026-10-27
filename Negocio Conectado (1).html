@@ -1,0 +1,716 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Negocio Conectado</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<style>
+/* Concepto: cuaderno de ruta portuario. Hilo (teal del Pacífico) que conecta mercados; rojo = delito, ají = alerta, verde = Estado que cuida. */
+:root{
+  --bg:#F1F5F6; --surface:#FFFFFF; --surface2:#E6EDF0; --ink:#0E2330; --muted:#4C616C; --line:#CBD7DC;
+  --accent:#0B6E77; --on-accent:#FFFFFF; --warm:#B87500; --bad:#B8342A; --good:#23804F;
+  --accent-soft:#D3EBEC; --warm-soft:#F8E8C6; --bad-soft:#F6D9D5; --good-soft:#D3EBDD;
+  --display:'Archivo','Arial Narrow',Arial,sans-serif; --body:'Source Sans 3',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#09171E; --surface:#112733; --surface2:#17313F; --ink:#E7EFF3; --muted:#97ADB8; --line:#25404E;
+  --accent:#43C3CB; --on-accent:#06242A; --warm:#F0B43C; --bad:#FF8173; --good:#5FCB8F;
+  --accent-soft:#12404A; --warm-soft:#3F3216; --bad-soft:#472320; --good-soft:#163D2B; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#09171E; --surface:#112733; --surface2:#17313F; --ink:#E7EFF3; --muted:#97ADB8; --line:#25404E;
+  --accent:#43C3CB; --on-accent:#06242A; --warm:#F0B43C; --bad:#FF8173; --good:#5FCB8F;
+  --accent-soft:#12404A; --warm-soft:#3F3216; --bad-soft:#472320; --good-soft:#163D2B; color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(64px + env(safe-area-inset-top,0px))}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.55 var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+h1,h2,h3{font-family:var(--display);font-variation-settings:"wdth" 112;text-wrap:balance;line-height:1.08;margin:0}
+h1{font-size:clamp(2.2rem,6.4vw,4.2rem);font-weight:850;letter-spacing:-.01em}
+h2{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800}
+h3{font-size:1.15rem;font-weight:700;font-variation-settings:"wdth" 100}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+.wrap{max-width:1080px;margin:0 auto}
+.eyebrow{font:500 .78rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.lead{font-size:1.15rem;color:var(--muted);max-width:62ch}
+.muted{color:var(--muted)}
+.note{font:400 .82rem/1.4 var(--mono);color:var(--muted)}
+
+/* nav */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line);margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px))}
+.top .wrap{display:flex;align-items:center;gap:16px;height:56px}
+.brand{font:800 .95rem var(--display);font-variation-settings:"wdth" 125;white-space:nowrap}
+.brand i{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--accent);margin-right:8px;box-shadow:14px 0 0 -2px var(--accent)}
+.nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1}
+.nav::-webkit-scrollbar{display:none}
+.nav a{white-space:nowrap;padding:8px 12px;border-radius:99px;color:var(--muted);text-decoration:none;font-weight:600;font-size:.92rem}
+.nav a:hover,.nav a.on{background:var(--accent-soft);color:var(--ink)}
+
+/* hero */
+.hero{padding-block:48px 24px;display:grid;grid-template-columns:1.15fr .85fr;gap:32px;align-items:center}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero .q{margin-top:20px;padding:16px 18px;border-left:4px solid var(--bad);background:var(--surface);border-radius:0 10px 10px 0;font-size:1.05rem}
+.hero .q b{display:block;font:500 .75rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--bad);margin-bottom:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.chip{border:1px solid var(--line);background:var(--surface);padding:6px 12px;border-radius:99px;font-size:.85rem;color:var(--muted)}
+.cta{display:inline-flex;gap:8px;align-items:center;margin-top:24px;background:var(--accent);color:var(--on-accent);border:0;padding:13px 22px;border-radius:10px;font-weight:700;text-decoration:none}
+.cta:hover{filter:brightness(1.08)}
+.heroart{width:100%;height:auto}
+@media(max-width:820px){.hero{grid-template-columns:1fr}.heroart{max-width:420px}}
+
+section{padding-block:56px 8px}
+.sec-head{display:grid;gap:12px;margin-bottom:28px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid2>*,.grid3>*{min-width:0}
+.g-map{grid-template-columns:1.5fr 1fr}.g-lv{grid-template-columns:.8fr 1.2fr;align-items:center}.g-lab{grid-template-columns:.9fr 1.1fr}
+@media(max-width:820px){.grid2,.grid3,.g-map,.g-lv,.g-lab{grid-template-columns:1fr}}
+
+.btn{border:1px solid var(--line);background:var(--surface);padding:9px 14px;border-radius:10px;font-weight:600}
+.btn:hover{border-color:var(--accent)}
+.btn.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.btn.bad.on{background:var(--bad);border-color:var(--bad);color:#fff}
+.btn.good.on{background:var(--good);border-color:var(--good);color:#fff}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.tag{display:inline-block;font:500 .72rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:5px 8px;border-radius:6px;background:var(--accent-soft);color:var(--ink)}
+.tag.bad{background:var(--bad-soft)}.tag.warm{background:var(--warm-soft)}.tag.good{background:var(--good-soft)}
+.kv{display:grid;gap:12px;margin-top:14px}
+.kv dt{font:500 .72rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.kv dd{margin:0}
+
+/* map */
+.mapbox{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.mapbox svg{display:block;width:100%;height:auto}
+.sea{fill:var(--accent-soft)} .land{fill:var(--surface2)}
+.edge{stroke:var(--muted);stroke-width:2;opacity:.55;fill:none}
+.edge.hot{stroke:var(--bad);opacity:1;stroke-width:3;stroke-dasharray:7 5;animation:dash 1s linear infinite}
+.edge.warm{stroke:var(--warm);opacity:1;stroke-width:2.5}
+@keyframes dash{to{stroke-dashoffset:-24}}
+.node{cursor:pointer}
+.node circle.c{fill:var(--accent);stroke:var(--surface);stroke-width:3;transition:fill .25s}
+.node text{font:600 13px var(--body);fill:var(--ink);paint-order:stroke;stroke:var(--surface2);stroke-width:4px;stroke-linejoin:round}
+.node.sel circle.ring{stroke:var(--ink);stroke-width:2;fill:none}
+.node circle.ring{fill:none;stroke:transparent}
+.node.hit circle.c{fill:var(--bad)} .node.n1 circle.c{fill:var(--warm)} .node.n2 circle.c{fill:#D8B56A}
+.node.ctrl circle.c{fill:var(--good)}
+.node:focus-visible circle.ring{stroke:var(--accent);stroke-width:3}
+.sealabel{font:italic 600 14px var(--body);fill:var(--accent);opacity:.9}
+.mapctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:14px 16px;border-top:1px solid var(--line)}
+.status{padding:12px 14px;border-radius:10px;background:var(--surface2);font-size:.95rem;min-height:3.4em}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.82rem;color:var(--muted)}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+
+/* levels */
+.rings{width:100%;max-width:320px;margin:0 auto;display:block}
+.rings circle{fill:var(--surface2);stroke:var(--line);stroke-width:1.5;transition:.3s;cursor:pointer}
+.rings circle.on{fill:var(--accent-soft);stroke:var(--accent);stroke-width:3}
+.rings text{font:700 12px var(--display);fill:var(--ink);pointer-events:none}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+
+/* cards */
+.dcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-bottom:20px}
+.dcard[hidden]{display:none}
+.dcard{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:6px;transition:.15s}
+.dcard:hover{transform:translateY(-2px);border-color:var(--bad)}
+.dcard.on{border-color:var(--bad);background:var(--bad-soft)}
+.dcard b{font:700 1rem var(--display)}
+.dcard span{font-size:.88rem;color:var(--muted)}
+.detail{border:1px solid var(--bad);border-radius:14px;background:var(--surface);padding:22px}
+.detail h3{font-size:1.5rem;color:var(--bad);margin-bottom:6px}
+
+.insts{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.inst{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:8px;align-content:start}
+.inst.dim{opacity:.28}
+.inst .who{font:800 1.3rem var(--display);font-variation-settings:"wdth" 125}
+.inst p{font-size:.92rem;color:var(--muted)}
+
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0}
+.flow button{border:1px solid var(--line);background:var(--surface);padding:12px 8px;font-weight:700;border-radius:0}
+.flow button:first-child{border-radius:10px 0 0 10px}.flow button:last-child{border-radius:0 10px 10px 0}
+.flow button.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+@media(max-width:560px){.flow{grid-template-columns:1fr 1fr}.flow button{border-radius:8px!important}}
+
+/* classify game */
+.game{display:grid;gap:10px}
+.item{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.item.ok{border-color:var(--good);background:var(--good-soft)}
+.item.no{border-color:var(--bad);background:var(--bad-soft)}
+.item small{display:block;color:var(--muted);margin-top:4px}
+@media(max-width:560px){.item{grid-template-columns:1fr}}
+
+/* bars */
+.bars{display:grid;gap:14px}
+.bar{display:grid;gap:4px}
+.bar .lab{display:flex;justify-content:space-between;font-weight:600;font-size:.95rem}
+.track{height:14px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.fill{height:100%;background:var(--bad);border-radius:99px;transition:width .6s ease,background .4s}
+.fill.good{background:var(--good)}
+.chain{display:grid;gap:10px;counter-reset:c}
+.chain li{list-style:none;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;display:flex;gap:12px;align-items:center}
+.chain li::before{content:"↓";font-weight:800;color:var(--bad)}
+.chain.good li::before{color:var(--good)}
+.chain li:first-child::before{content:"●"}
+
+/* lab */
+label{display:grid;gap:4px;font-weight:600;font-size:.9rem}
+select,textarea,input[type=text]{font:inherit;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);width:100%}
+textarea{min-height:230px;line-height:1.5;resize:vertical}
+.ficha{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.ficha div{background:var(--surface2);border-radius:10px;padding:10px 12px;font-size:.95rem}
+.ficha b{display:block;font:500 .72rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.crit{display:grid;gap:8px}
+.crit label{grid-template-columns:auto 1fr;gap:10px;align-items:start;font-weight:400}
+.crit input{margin-top:4px;accent-color:var(--accent);width:18px;height:18px}
+
+/* quiz */
+.qwrap{max-width:720px}
+.opt{display:block;width:100%;text-align:left;margin-top:10px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.ok{background:var(--good-soft);border-color:var(--good)}
+.opt.no{background:var(--bad-soft);border-color:var(--bad)}
+.progress{height:8px;border-radius:99px;background:var(--surface2);overflow:hidden;margin-bottom:18px}
+.progress i{display:block;height:100%;background:var(--accent);transition:width .3s}
+
+/* timeline */
+.tl{display:flex;gap:3px;margin-bottom:14px;flex-wrap:nowrap}
+.tl button{border:0;padding:12px 4px;border-radius:8px;background:var(--accent-soft);font:700 .8rem var(--display);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tl button.on{background:var(--accent);color:var(--on-accent)}
+.tl button.close{background:var(--warm-soft)}.tl button.close.on{background:var(--warm);color:#fff}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:.92rem}
+th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{font:500 .72rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--surface2)}
+td.hl{background:var(--accent-soft)}
+details{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+details+details{margin-top:8px}
+summary{font-weight:700;cursor:pointer}
+details p{margin-top:8px;color:var(--muted)}
+.src{display:grid;gap:8px;padding-left:18px;font-size:.9rem;color:var(--muted)}
+.src a{color:var(--accent);overflow-wrap:anywhere}
+footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+
+<header class="top"><div class="wrap">
+  <div class="brand"><i></i>Negocio Conectado</div>
+  <nav class="nav" id="nav" aria-label="Secciones">
+    <a href="#mapa">Mercados</a><a href="#niveles">Niveles</a><a href="#delitos">Delitos</a><a href="#estado">Estado</a><a href="#medidas">Medidas</a><a href="#desarrollo">Desarrollo</a><a href="#quiz">Quiz</a><a href="#glosario">Glosario</a>
+  </nav>
+</div></header>
+
+<main class="wrap">
+<div class="hero">
+  <div>
+    <p class="eyebrow">Ciencias Sociales · 4.° de secundaria · Arequipa</p>
+    <h1 style="margin-top:14px">Cuando los mercados se conectan, el Estado <em>cuida el hilo</em></h1>
+    <p class="lead" style="margin-top:16px">Recorre cómo se integran los mercados del Perú, qué delitos económicos y financieros los amenazan y qué medidas y sanciones usa el Estado para proteger el desarrollo del país.</p>
+    <div class="q"><b>Pregunta detonante</b>¿Por qué el contrabando que entra por la frontera y llega a los mercados de Arequipa obliga al Estado a actuar para cuidar el desarrollo del país?</div>
+    <div class="chips"><span class="chip">Integración de mercados</span><span class="chip">Delitos económicos y financieros</span><span class="chip">Medidas y sanciones</span><span class="chip">Sostenibilidad</span></div>
+    <a class="cta" href="#mapa">Tira del hilo ↓</a>
+  </div>
+  <svg class="heroart" viewBox="0 0 400 340" role="img" aria-label="Red de mercados conectados por hilos">
+    <g fill="none" stroke="var(--muted)" stroke-width="2" opacity=".6">
+      <path d="M70 70 L200 150 L330 70 M200 150 L90 250 M200 150 L320 250 M90 250 L320 250 M70 70 L90 250 M330 70 L320 250"/>
+    </g>
+    <path d="M200 150 L320 250" stroke="var(--bad)" stroke-width="3" stroke-dasharray="7 5" fill="none"><animate attributeName="stroke-dashoffset" from="0" to="-24" dur="1s" repeatCount="indefinite"/></path>
+    <g font-family="Source Sans 3, sans-serif" font-size="14" font-weight="600" fill="var(--ink)">
+      <circle cx="70" cy="70" r="14" fill="var(--accent)"/><text x="50" y="45">Majes</text>
+      <circle cx="330" cy="70" r="14" fill="var(--accent)"/><text x="312" y="45">Puno</text>
+      <circle cx="200" cy="150" r="20" fill="var(--accent)"/><text x="160" y="190">Cerro Colorado</text>
+      <circle cx="90" cy="250" r="14" fill="var(--accent)"/><text x="62" y="288">Matarani</text>
+      <circle cx="320" cy="250" r="14" fill="var(--bad)"/><text x="268" y="288">Frontera sur</text>
+    </g>
+  </svg>
+</div>
+
+<!-- MAPA -->
+<section id="mapa">
+  <div class="sec-head">
+    <p class="eyebrow">1 · Integración de mercados</p>
+    <h2>La red de mercados del sur del Perú</h2>
+    <p class="lead">Un mercado no vive solo: recibe insumos de unos, vende a otros y necesita caminos, puertos y confianza. Toca un punto del esquema, luego prueba qué pasa cuando un delito rompe un mercado.</p>
+  </div>
+  <div class="grid2 g-map">
+    <div class="mapbox">
+      <svg viewBox="0 0 760 480" id="map" role="group" aria-label="Esquema de mercados del sur del Perú">
+        <rect width="760" height="480" class="land"/>
+        <path class="sea" d="M0 100 L110 170 L230 300 L330 400 L470 480 L0 480 Z"/>
+        <text class="sealabel" x="60" y="400">Océano Pacífico</text>
+        <g id="edges"></g><g id="nodes"></g>
+      </svg>
+      <div class="mapctl">
+        <button class="btn bad" id="btnHit" aria-pressed="false">Simular delito en el punto elegido</button>
+        <button class="btn good" id="btnState" aria-pressed="false">El Estado actúa</button>
+        <button class="btn" id="btnReset">Reiniciar</button>
+      </div>
+      <div class="mapctl" style="padding-top:0;border:0"><div class="legend"><span><i style="background:var(--accent)"></i>Mercado</span><span><i style="background:var(--bad)"></i>Golpeado</span><span><i style="background:var(--warm)"></i>Lo siente</span><span><i style="background:var(--good)"></i>Bajo control</span></div></div>
+      <p class="note" style="padding:0 16px 14px">Esquema ilustrativo, sin escala. Las ofertas y necesidades son ejemplos para la clase.</p>
+    </div>
+    <div style="display:grid;gap:14px;align-content:start;min-width:0">
+      <div class="panel" id="nodeInfo"></div>
+      <div class="status" id="mapStatus" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- NIVELES -->
+<section id="niveles">
+  <div class="sec-head">
+    <p class="eyebrow">2 · Niveles</p>
+    <h2>De la esquina al mundo: cuatro niveles de integración</h2>
+    <p class="lead">La integración crece por capas. En cada nivel cambian los actores, las rutas y también quién del Estado interviene.</p>
+  </div>
+  <div class="grid2 g-lv">
+    <svg class="rings" viewBox="0 0 300 300" id="rings" role="img" aria-label="Cuatro círculos concéntricos: local, regional, nacional e internacional"></svg>
+    <div class="panel" id="levelPanel"></div>
+  </div>
+  <div class="steps" id="levelBtns" style="margin-top:16px"></div>
+</section>
+
+<!-- DELITOS -->
+<section id="delitos">
+  <div class="sec-head">
+    <p class="eyebrow">3 · Delitos económicos y financieros</p>
+    <h2>Qué amenaza a los mercados conectados</h2>
+    <p class="lead">Un delito económico o financiero daña la economía de todos, aunque parezca que solo afecta a un comprador o vendedor. Elige uno para ver qué es, a quién perjudica y cómo responde el Estado.</p>
+  </div>
+  <div class="grid2" style="margin-bottom:20px">
+    <div class="panel"><span class="tag warm">Económico</span><h3 style="margin:10px 0 6px">Delito económico</h3><p>Acto ilegal que daña el orden económico: la producción, el comercio, los impuestos y la competencia entre negocios.</p><p class="muted" style="margin-top:8px">Ejemplos: contrabando, evasión de impuestos, cárteles, corrupción en compras públicas.</p></div>
+    <div class="panel"><span class="tag bad">Financiero</span><h3 style="margin:10px 0 6px">Delito financiero</h3><p>Acto ilegal que afecta al dinero y al sistema financiero: bancos, créditos, inversiones y transferencias.</p><p class="muted" style="margin-top:8px">Ejemplos: lavado de activos, estafas con falsas inversiones, fraude con tarjetas o cuentas.</p></div>
+  </div>
+  <div class="panel" style="margin-bottom:20px">
+    <h3>Lo que tienen en común</h3>
+    <ul style="margin:10px 0 0;padding-left:20px;display:grid;gap:6px">
+      <li>Buscan una ganancia ilegal, muchas veces sin violencia, por lo que parecen «inofensivos».</li>
+      <li>Perjudican a mucha gente a la vez: comerciantes honestos, consumidores y el Estado.</li>
+      <li>Reducen los impuestos que financian escuelas, hospitales y obras.</li>
+      <li>Destruyen la confianza que necesitan los mercados para funcionar y crecer.</li>
+      <li>Suelen ser difíciles de detectar, por eso el Estado usa varias instituciones a la vez.</li>
+    </ul>
+    <p class="note" style="margin-top:12px">En el Perú, el Código Penal agrupa varios de ellos en delitos contra el orden económico, el orden financiero y monetario, y delitos tributarios y aduaneros.</p>
+  </div>
+  <div class="row" id="dfilter" style="margin-bottom:14px"></div>
+  <div class="dcards" id="dcards"></div>
+  <div class="detail" id="dDetail" aria-live="polite"></div>
+</section>
+
+<!-- ESTADO -->
+<section id="estado">
+  <div class="sec-head">
+    <p class="eyebrow">4 · El Estado</p>
+    <h2>Quién hace qué para proteger el mercado</h2>
+    <p class="lead">El Estado no es una sola oficina. Unas instituciones previenen y promueven (medidas), otras detectan, investigan y castigan (sanciones). Filtra y mira cómo se reparten el trabajo.</p>
+  </div>
+  <div class="row" id="instFilter" style="margin-bottom:16px"></div>
+  <div class="insts" id="insts"></div>
+
+  <div class="grid2" style="margin-top:28px">
+    <div class="panel">
+      <h3>Tres niveles de gobierno</h3>
+      <div class="row" id="govBtns" style="margin:12px 0"></div>
+      <div id="govPanel"></div>
+    </div>
+    <div class="panel">
+      <h3>Sigue un caso de contrabando</h3>
+      <p class="muted" style="margin-top:6px">Del operativo a la sanción, paso a paso.</p>
+      <div class="flow" id="flowBtns"></div>
+      <div id="flowPanel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- MEDIDAS -->
+<section id="medidas">
+  <div class="sec-head">
+    <p class="eyebrow">5 · Medidas y sanciones</p>
+    <h2>Prevenir y castigar no es lo mismo</h2>
+    <p class="lead">Una <b>medida de política económica</b> orienta, incentiva o protege para que los mercados funcionen bien. Una <b>sanción</b> es el castigo cuando alguien comete un delito o una infracción.</p>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Medidas que cuidan tu negocio</h3>
+      <div class="steps" id="medBtns" style="margin-top:12px"></div>
+      <div id="medPanel"></div>
+    </div>
+    <div class="panel">
+      <h3>Juego: ¿medida o sanción?</h3>
+      <p class="muted" style="margin:6px 0 14px">Clasifica cada acción del Estado.</p>
+      <div class="game" id="game"></div>
+      <p style="margin-top:14px;font-weight:700" id="gameScore"></p>
+    </div>
+  </div>
+</section>
+
+<!-- DESARROLLO -->
+<section id="desarrollo">
+  <div class="sec-head">
+    <p class="eyebrow">6 · Desarrollo y sostenibilidad</p>
+    <h2>Por qué todo esto sostiene el desarrollo del país</h2>
+    <p class="lead">Primero entiende qué significan desarrollo y sostenibilidad. Después comprueba cómo las medidas y sanciones del Estado los protegen.</p>
+  </div>
+  <div class="grid2" style="margin-bottom:20px">
+    <div class="panel"><span class="tag good">Concepto</span><h3 style="margin:10px 0 6px;font-size:1.4rem">¿Qué es el desarrollo?</h3>
+      <p>Es la mejora de la vida de las personas de forma amplia y duradera: más ingresos, pero también empleo digno, educación, salud, seguridad y oportunidades para todos.</p>
+      <p class="muted" style="margin-top:8px">En el Perú, el desarrollo se ve cuando un negocio de Cerro Colorado crece, contrata trabajadores con contrato y paga sus impuestos, y esos impuestos llegan a escuelas y postas.</p></div>
+    <div class="panel"><span class="tag good">Concepto</span><h3 style="margin:10px 0 6px;font-size:1.4rem">¿Qué es la sostenibilidad?</h3>
+      <p>Es lograr ese desarrollo hoy sin quitarles posibilidades a las generaciones futuras. Esta idea se difundió con el Informe Brundtland de la ONU (1987): satisfacer las necesidades del presente sin comprometer las de quienes vienen después.</p>
+      <p class="muted" style="margin-top:8px">Es sostenible producir y vender cuidando el agua, respetando las reglas y compitiendo de forma justa, para que el mercado siga funcionando mañana.</p></div>
+  </div>
+
+  <div class="panel" style="margin-bottom:20px">
+    <h3>Crecimiento no es lo mismo que desarrollo</h3>
+    <div class="row" style="margin:12px 0"><button class="btn on" id="cdG" aria-pressed="true">Crecimiento económico</button><button class="btn" id="cdD" aria-pressed="false">Desarrollo</button></div>
+    <div id="cdPanel" aria-live="polite"></div>
+  </div>
+
+  <div class="panel" style="margin-bottom:20px">
+    <h3>Las cuatro dimensiones de la sostenibilidad</h3>
+    <p class="muted" style="margin-top:6px">Para que el desarrollo dure, se cuidan cuatro cosas a la vez. Elige una.</p>
+    <div class="steps" id="dimBtns" style="margin:12px 0"></div>
+    <div id="dimPanel" aria-live="polite"></div>
+  </div>
+
+  <div style="margin-bottom:20px">
+    <h3>Metas mundiales: los Objetivos de Desarrollo Sostenible</h3>
+    <p class="muted" style="margin:6px 0 12px">En 2015, los países de la ONU, entre ellos el Perú, acordaron 17 objetivos para el 2030. Estos son los que más se relacionan con tu tema.</p>
+    <div class="dcards" id="odsCards"></div>
+    <div class="panel" id="odsPanel" aria-live="polite"></div>
+  </div>
+
+  <h3 style="margin-bottom:12px">¿Qué pasa si el Estado no actúa?</h3>
+  <div class="grid2">
+    <div class="panel">
+      <div class="row" style="margin-bottom:16px">
+        <button class="btn bad on" id="scNo" aria-pressed="true">Sin medidas ni sanciones</button>
+        <button class="btn good" id="scYes" aria-pressed="false">Con medidas y sanciones</button>
+      </div>
+      <div class="bars" id="bars"></div>
+      <p class="note" style="margin-top:14px">Escala ilustrativa para razonar. No son datos medidos.</p>
+    </div>
+    <div class="panel">
+      <h3 id="chainTitle">Cadena de consecuencias</h3>
+      <ul class="chain" id="chain" style="padding:0;margin:14px 0"></ul>
+      <button class="btn" id="chainNext">Mostrar siguiente consecuencia</button>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="sec-head">
+    <p class="eyebrow">7 · Comprueba lo aprendido</p>
+    <h2>Quiz: mercados, delitos y Estado</h2>
+  </div>
+  <div class="panel qwrap" id="quizBox"></div>
+</section>
+
+<!-- GLOSARIO -->
+<section id="glosario">
+  <div class="sec-head">
+    <p class="eyebrow">8 · Glosario</p>
+    <h2>Palabras clave para entender el tema</h2>
+    <p class="lead">Busca una palabra o filtra por tema. Toca un término para leer su significado y un ejemplo.</p>
+  </div>
+  <div class="row" style="margin-bottom:12px"><input type="text" id="gq" placeholder="Buscar una palabra…" aria-label="Buscar en el glosario" style="max-width:360px"></div>
+  <div class="row" id="gf" style="margin-bottom:16px"></div>
+  <p class="note" id="gcount" style="margin-bottom:10px"></p>
+  <div id="glos"></div>
+</section>
+
+<footer>
+  <h3 style="margin-bottom:10px">Fuentes</h3>
+  <ul class="src">
+    <li>Andina. <i>Sunat realiza campaña de prevención del contrabando en la región Arequipa.</i> <a href="https://andina.pe/agencia/noticia-sunat-realiza-campana-prevencion-del-contrabando-la-region-arequipa-1002005.aspx" target="_blank" rel="noopener">andina.pe</a></li>
+    <li>BCRP, Sucursal Arequipa. <i>Caracterización del departamento de Arequipa.</i> <a href="https://www.bcrp.gob.pe/docs/Sucursales/Arequipa/arequipa-caracterizacion.pdf" target="_blank" rel="noopener">bcrp.gob.pe</a></li>
+    <li>Diario Correo (2026). <i>Incautan mercadería de contrabando valorizada en más de 2 millones de soles en Mollendo.</i> <a href="https://diariocorreo.pe/edicion/arequipa/arequipa-incautan-mercaderia-de-contrabando-valorizada-en-mas-de-2-millones-de-soles-en-mollendo-noticia/" target="_blank" rel="noopener">diariocorreo.pe</a></li>
+    <li>Diario El Pueblo (18/10/2026). <i>Incautan más de 600 mil cigarrillos ilegales que llegaron a Arequipa.</i> <a href="https://diarioelpueblo.com.pe/2026/10/18/incautan-mas-de-600-mil-cigarrillos-ilegales-que-llegaron-a-arequipa/" target="_blank" rel="noopener">diarioelpueblo.com.pe</a></li>
+    <li>Gestión. <i>«Cártel de laboratorios»: estos son los implicados en la investigación de Indecopi.</i> <a href="https://gestion.pe/economia/cartel-de-laboratorios-estos-son-los-implicados-en-la-investigacion-de-indecopi-actos-colusorios-medicamentos-essalud-minsa-noticia/" target="_blank" rel="noopener">gestion.pe</a></li>
+    <li>Gestión. <i>¿Cómo trabaja la UIF de la SBS para identificar operaciones sospechosas de lavado de activos?</i> <a href="https://gestion.pe/economia/sbs-uif-peru-lavado-de-activos-fiscalia-lavado-de-activos-aumenta-reporte-de-operaciones-de-sospechosas-en-transferencia-de-fondos-noticia/" target="_blank" rel="noopener">gestion.pe</a></li>
+    <li>Gestión. <i>Un hub portuario en el sur: lo que se impulsaría con Matarani y Corío.</i> <a href="https://gestion.pe/economia/un-hub-portuario-en-el-sur-lo-que-se-impulsaria-con-matarani-y-corio-apn-puertos-en-peru-noticia/" target="_blank" rel="noopener">gestion.pe</a></li>
+    <li>RPP (2026). <i>Sorteo de Sunat: más de 85 mil personas ya se inscribieron…</i> <a href="https://rpp.pe/economia/economia/sorteo-de-sunat-mas-de-85-mil-personas-ya-se-inscribieron-como-participar-con-tus-comprobantes-electronicos-y-ganar-hasta-s-100-mil-noticia-1709723" target="_blank" rel="noopener">rpp.pe</a></li>
+  </ul>
+  <p class="note" style="margin-top:14px">Las cifras vienen de las noticias citadas arriba. Las descripciones de funciones de las instituciones son generales y con fines educativos.</p>
+</footer>
+</main>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
+const store={get(k,d){try{return localStorage.getItem(k)??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+
+/* ---------- nav highlight ---------- */
+const secs=$$('main section');
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){$$('#nav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id))}})},{rootMargin:'-40% 0px -55% 0px'});
+secs.forEach(s=>io.observe(s));
+
+/* ---------- MAPA ---------- */
+const NODES={
+ cc:{n:'Cerro Colorado',x:350,y:290,lvl:'Local',of:'Compradores, comercio minorista y mayorista, servicios.',ne:'Alimentos, insumos, transporte y comprobantes de pago confiables.',ex:'Es el mercado de partida de tu negocio. Si llega mercadería ilegal más barata, el vendedor formal pierde clientes.'},
+ aqp:{n:'Arequipa ciudad',x:420,y:335,lvl:'Regional',of:'Comercio, industria, servicios financieros y logística para el sur.',ne:'Materias primas, productos del campo y rutas seguras hacia otras regiones.',ex:'Funciona como centro de distribución del sur: recibe y reenvía productos.'},
+ majes:{n:'Majes',x:290,y:225,lvl:'Regional',of:'Productos agrícolas (como cebolla y ajo) y lácteos.',ne:'Transporte, insumos y mercados donde vender a buen precio.',ex:'Ejemplo: «Ofrezco cebolla de Majes».'},
+ mat:{n:'Matarani',x:290,y:360,lvl:'Internacional',of:'Puerto: entrada y salida de carga del comercio exterior.',ne:'Carga, carreteras, inversión y control aduanero eficiente.',ex:'Puerta marítima del sur. Se habla de un hub portuario con Matarani y Corío.'},
+ moq:{n:'Moquegua – Ilo',x:500,y:385,lvl:'Regional',of:'Minería, servicios portuarios y pesca.',ne:'Energía, transporte y mano de obra.',ex:'Vecino del sur: conecta a Arequipa con Tacna y con el puerto de Ilo.'},
+ tac:{n:'Tacna',x:590,y:440,lvl:'Internacional',of:'Comercio fronterizo y servicios.',ne:'Productos y control en frontera.',ex:'Zona de frontera con Chile, con alto movimiento de personas y mercadería.'},
+ puno:{n:'Puno – Juliaca',x:565,y:250,lvl:'Regional',of:'Ganadería, fibra de alpaca, quinua y comercio hacia Bolivia.',ne:'Transporte, insumos y productos de la costa.',ex:'Ejemplo: «Necesito transporte a Puno».'},
+ cus:{n:'Cusco',x:470,y:150,lvl:'Regional',of:'Turismo, agricultura y artesanía.',ne:'Alimentos, bienes y servicios de otras regiones.',ex:'Gran mercado del sur andino conectado con Arequipa y Puno.'},
+ bol:{n:'Frontera con Bolivia',x:680,y:215,lvl:'Internacional',of:'Entrada y salida de mercadería del comercio exterior.',ne:'Control aduanero y vigilancia.',ex:'Por zonas fronterizas puede ingresar contrabando, como en el relato inicial: «vienen de Bolivia, nadie dice nada».'},
+ lim:{n:'Lima',x:140,y:140,lvl:'Nacional',of:'Capital, grandes empresas, bancos y mercado de capitales.',ne:'Alimentos, minerales y productos del interior.',ex:'Principal mercado nacional y sede de las instituciones que dirigen la política económica.'}
+};
+const EDGES=[['cc','aqp'],['majes','cc'],['aqp','mat'],['aqp','moq'],['moq','tac'],['aqp','puno'],['aqp','cus'],['cus','puno'],['puno','bol'],['mat','lim'],['aqp','lim'],['majes','aqp']];
+const adj={};Object.keys(NODES).forEach(k=>adj[k]=[]);EDGES.forEach(([a,b])=>{adj[a].push(b);adj[b].push(a)});
+let sel='cc',hit=false,stateOn=false;
+const gE=$('#edges'),gN=$('#nodes'),NS='http://www.w3.org/2000/svg';
+const edgeEls=EDGES.map(([a,b])=>{const l=document.createElementNS(NS,'line');l.setAttribute('x1',NODES[a].x);l.setAttribute('y1',NODES[a].y);l.setAttribute('x2',NODES[b].x);l.setAttribute('y2',NODES[b].y);l.setAttribute('class','edge');gE.appendChild(l);return l});
+const nodeEls={};
+Object.entries(NODES).forEach(([k,d])=>{
+ const g=document.createElementNS(NS,'g');g.setAttribute('class','node');g.setAttribute('tabindex','0');g.setAttribute('role','button');g.setAttribute('aria-label',d.n);
+ const r=k==='cc'?17:12;
+ g.innerHTML=`<circle class="ring" cx="${d.x}" cy="${d.y}" r="${r+7}"/><circle class="c" cx="${d.x}" cy="${d.y}" r="${r}"/><text x="${d.x}" y="${d.y-r-8}" text-anchor="middle">${d.n}</text>`;
+ g.addEventListener('click',()=>{sel=k;drawMap()});
+ g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();sel=k;drawMap()}});
+ gN.appendChild(g);nodeEls[k]=g;
+});
+function dist(src){const d={[src]:0},q=[src];while(q.length){const c=q.shift();adj[c].forEach(n=>{if(!(n in d)){d[n]=d[c]+1;q.push(n)}})}return d}
+function drawMap(){
+ const d=dist(sel);
+ Object.entries(nodeEls).forEach(([k,g])=>{
+  g.classList.remove('hit','n1','n2','ctrl','sel');
+  if(k===sel)g.classList.add('sel');
+  if(hit){
+   if(stateOn){ if(k===sel)g.classList.add('ctrl'); }
+   else{ if(k===sel)g.classList.add('hit'); else if(d[k]===1)g.classList.add('n1'); else if(d[k]===2)g.classList.add('n2'); }
+  }
+ });
+ edgeEls.forEach((l,i)=>{
+  const [a,b]=EDGES[i];l.setAttribute('class','edge');
+  if(hit&&!stateOn&&(a===sel||b===sel))l.classList.add('hot');
+  else if(hit&&!stateOn&&(d[a]===1||d[b]===1)&&Math.min(d[a],d[b])===1)l.classList.add('warm');
+ });
+ const n=NODES[sel];
+ $('#nodeInfo').innerHTML=`<span class="tag">${n.lvl}</span><h3 style="margin-top:10px;font-size:1.4rem">${n.n}</h3><dl class="kv"><div><dt>Ofrece</dt><dd>${n.of}</dd></div><div><dt>Necesita</dt><dd>${n.ne}</dd></div><div><dt>En la red</dt><dd>${n.ex}</dd></div><div><dt>Conectado con</dt><dd>${adj[sel].map(k=>NODES[k].n).join(', ')}</dd></div></dl>`;
+ let s;
+ if(!hit)s='Elige un punto y pulsa «Simular delito». Observa qué mercados lo sienten.';
+ else if(!stateOn){const c1=adj[sel].length,c2=Object.values(d).filter(v=>v===2).length;s=`<b>${n.n}</b> recibe mercadería ilegal o un fraude. Golpea de inmediato a ${c1} mercados conectados y después a ${c2} más: bajan las ventas formales, se paga menos impuesto y se pierde confianza. Ahora activa «El Estado actúa».`}
+ else s=`El Estado actúa en <b>${n.n}</b>: control aduanero, incautaciones, fiscalización y sanciones cortan el problema en el origen. Los mercados conectados se mantienen a salvo.`;
+ $('#mapStatus').innerHTML=s;
+ $('#btnHit').setAttribute('aria-pressed',hit);$('#btnHit').classList.toggle('on',hit);
+ $('#btnState').setAttribute('aria-pressed',stateOn);$('#btnState').classList.toggle('on',stateOn);
+}
+$('#btnHit').onclick=()=>{hit=!hit;if(!hit)stateOn=false;drawMap()};
+$('#btnState').onclick=()=>{if(!hit)hit=true;stateOn=!stateOn;drawMap()};
+$('#btnReset').onclick=()=>{hit=false;stateOn=false;sel='cc';drawMap()};
+drawMap();
+
+/* ---------- NIVELES ---------- */
+const LV=[
+ {n:'Local',r:60,t:'Mercados de barrio y de distrito',d:'Productores, comerciantes y compradores de una misma localidad, como los de Cerro Colorado. Aquí empieza la integración: tu vecino te compra y tú le compras.',ex:'Un vendedor de Cerro Colorado compra cebolla de Majes y la vende a familias del distrito.',st:'Municipalidad distrital: licencias de funcionamiento, orden del mercado y fiscalización local.'},
+ {n:'Regional',r:95,t:'Arequipa con el sur del Perú',d:'Los mercados de una región se unen con los de regiones vecinas mediante carreteras, transporte y comercio. Arequipa, Puno, Cusco, Moquegua y Tacna forman una red del sur.',ex:'Cebolla de Majes viaja a Puno; quinua y fibra de Puno llegan a Arequipa.',st:'Gobierno Regional de Arequipa: promoción de producción, obras y desarrollo regional, junto con el nivel nacional.'},
+ {n:'Nacional',r:122,t:'Costa, sierra y selva en un solo mercado',d:'El país funciona como una gran red. Lima, las ciudades del interior y los puertos intercambian bienes, dinero y servicios. Las reglas son las mismas en todo el territorio.',ex:'Productos del sur llegan a Lima y los bancos prestan a negocios de todas las regiones.',st:'Gobierno nacional: MEF, BCRP, SUNAT, SBS, Indecopi, Fiscalía y Poder Judicial.'},
+ {n:'Internacional',r:148,t:'Mercados que cruzan fronteras',d:'El comercio exterior usa puertos, aduanas y fronteras. Trae oportunidades (exportar, importar) y también riesgos, como el contrabando.',ex:'Productos salen por Matarani; mercadería ilegal puede entrar por fronteras como la de Bolivia.',st:'SUNAT-Aduanas, Policía, Fiscalía y acuerdos de comercio del Estado peruano.'}
+];
+let lvl=0;
+const rg=$('#rings');
+[...LV].reverse().forEach((l,i)=>{const idx=LV.length-1-i;const c=document.createElementNS(NS,'circle');c.setAttribute('cx',150);c.setAttribute('cy',150);c.setAttribute('r',l.r);c.dataset.i=idx;c.addEventListener('click',()=>{lvl=idx;drawLv()});rg.appendChild(c)});
+LV.forEach((l,i)=>{const t=document.createElementNS(NS,'text');t.setAttribute('x',150);t.setAttribute('y',150-l.r+17);t.setAttribute('text-anchor','middle');t.textContent=l.n;rg.appendChild(t)});
+LV.forEach((l,i)=>{const b=el('button','btn',(i+1)+'. '+l.n);b.onclick=()=>{lvl=i;drawLv()};$('#levelBtns').appendChild(b)});
+function drawLv(){
+ const l=LV[lvl];
+ $$('#rings circle').forEach(c=>c.classList.toggle('on',+c.dataset.i<=lvl&&+c.dataset.i===lvl));
+ $$('#levelBtns .btn').forEach((b,i)=>b.classList.toggle('on',i===lvl));
+ $('#levelPanel').innerHTML=`<span class="tag">Nivel ${lvl+1} de 4</span><h3 style="margin:10px 0 8px;font-size:1.5rem">${l.t}</h3><p>${l.d}</p><dl class="kv"><div><dt>Ejemplo</dt><dd>${l.ex}</dd></div><div><dt>Quién del Estado interviene</dt><dd>${l.st}</dd></div></dl>`;
+}
+drawLv();
+
+/* ---------- DELITOS ---------- */
+const DEL=[
+ {k:'Contrabando',c:'E',s:'Meter o sacar mercadería sin pagar impuestos ni pasar por aduana.',q:'Ingresar mercadería evadiendo el control de la aduana y sin pagar tributos, por ejemplo cigarrillos que cruzan la frontera sin declararse.',ar:'Un vendedor ofrece cigarrillos a mitad de precio y sin boleta. En las noticias: el 18/10/2026 se incautaron más de 600 mil cigarrillos ilegales que llegaron a Arequipa, y en Mollendo se incautó mercadería valorizada en más de 2 millones de soles.',d:'Comerciantes formales que pagan impuestos, consumidores (productos sin control de calidad) y al Estado, que deja de recaudar.',a:'SUNAT-Aduanas, Policía, Fiscalía y Poder Judicial.',sa:'Incautación o comiso de la mercadería, multas y cierre de local. Si el caso es grave, pasa a la vía penal con pena de cárcel.',t:'bad'},
+ {k:'Evasión y venta sin comprobante',c:'E',s:'No dar boleta o factura para no declarar ventas.',q:'No entregar comprobante de pago ni declarar las ventas reales para pagar menos impuestos o ninguno.',ar:'Un puesto del mercado vende sin boleta. Por eso la SUNAT impulsa el sorteo para quienes piden comprobantes electrónicos: más de 85 mil personas ya se habían inscrito y se puede ganar hasta S/100 mil.',d:'Todos los que sí pagan, porque compiten en desventaja, y los servicios públicos que se financian con impuestos.',a:'SUNAT, con apoyo de la Fiscalía cuando hay delito tributario.',sa:'Multas, cierre temporal del establecimiento, comiso y, en casos graves, proceso penal por delito tributario.',t:'warm'},
+ {k:'Lavado de activos',c:'F',s:'Hacer pasar dinero ilegal como si fuera legal.',q:'Esconder el origen de dinero que viene de actividades ilegales mediante transferencias, negocios de fachada o compras para que parezca legítimo.',ar:'Un negocio recibe grandes depósitos que no corresponden a sus ventas. La UIF de la SBS analiza reportes de operaciones sospechosas que le envían bancos y otras entidades.',d:'A la economía formal, porque el dinero ilegal distorsiona precios y financia otros delitos.',a:'UIF-Perú (SBS), Fiscalía especializada y Poder Judicial.',sa:'Pena de cárcel, decomiso de bienes y dinero, y multas. Las entidades financieras también pueden recibir sanciones si no reportan.',t:'bad'},
+ {k:'Cártel o colusión',c:'E',s:'Competidores que se ponen de acuerdo para fijar precios.',q:'Acuerdo secreto entre empresas que deberían competir, para subir precios, repartirse clientes o manipular concursos de compras.',ar:'Según una noticia, Indecopi investigó un «cártel de laboratorios» por actos colusorios en la venta de medicamentos a EsSalud y Minsa.',d:'Consumidores y Estado, que pagan más caro, y a los competidores honestos.',a:'Indecopi y, si hay delito, Fiscalía.',sa:'Multas a las empresas, prohibiciones y, en algunos casos, responsabilidad penal.',t:'warm'},
+ {k:'Estafa y fraude financiero',c:'F',s:'Engañar para quedarse con dinero ajeno.',q:'Captar dinero con promesas falsas de ganancias rápidas, usar identidades falsas o cobrar por servicios que no existen.',ar:'Una «inversión» que promete duplicar tu dinero en un mes, ofrecida por redes sociales a comerciantes del mercado.',d:'Ahorristas y pequeños negocios, y la confianza en todo el sistema financiero.',a:'SBS, SMV (mercado de valores), Policía, Fiscalía.',sa:'Cárcel, devolución del dinero y cierre de la entidad que opera sin autorización.',t:'bad'},
+ {k:'Corrupción en compras públicas',c:'E',s:'Pagar o recibir favores para ganar contratos del Estado.',q:'Funcionarios o empresas que se ponen de acuerdo para que un contrato público se adjudique a quien paga, sin competir de verdad.',ar:'Una obra para el mercado distrital se entrega a una empresa sin experiencia, a cambio de un pago indebido.',d:'A toda la comunidad, porque la obra sale cara o mala, y al uso del dinero público.',a:'Contraloría, OSCE, Procuraduría, Fiscalía y Poder Judicial.',sa:'Inhabilitación, multas, cárcel y devolución del dinero al Estado.',t:'bad'}
+];
+let dsel=0;
+let dfil='T';
+[['T','Todos'],['E','Económicos'],['F','Financieros']].forEach(([k,l])=>{const b=el('button','btn',l);b.dataset.k=k;b.onclick=()=>{dfil=k;const f=DEL.findIndex(x=>dfil==='T'||x.c===dfil);if(DEL[dsel].c!==dfil&&dfil!=='T')dsel=f;drawD()};$('#dfilter').appendChild(b)});
+DEL.forEach((x,i)=>{const b=el('button','dcard',`<span class="tag ${x.c==='F'?'bad':'warm'}" style="justify-self:start">${x.c==='F'?'Financiero':'Económico'}</span><b>${x.k}</b><span>${x.s}</span>`);b.dataset.i=i;b.onclick=()=>{dsel=i;drawD()};$('#dcards').appendChild(b)});
+function drawD(){
+ $$('#dfilter .btn').forEach(b=>b.classList.toggle('on',b.dataset.k===dfil));$$('#dcards .dcard').forEach((b,i)=>{b.classList.toggle('on',i===dsel);b.hidden=!(dfil==='T'||DEL[i].c===dfil)});
+ const x=DEL[dsel];
+ $('#dDetail').innerHTML=`<span class="tag ${x.c==='F'?'bad':'warm'}">${x.c==='F'?'Delito financiero':'Delito económico'}</span><h3 style="margin-top:10px">${x.k}</h3><p style="font-size:1.05rem">${x.q}</p><dl class="kv"><div><dt>Cómo se ve en Arequipa</dt><dd>${x.ar}</dd></div><div><dt>A quién perjudica</dt><dd>${x.d}</dd></div><div><dt>Quién actúa</dt><dd>${x.a}</dd></div><div><dt>Sanciones posibles</dt><dd>${x.sa}</dd></div></dl>`;
+}
+drawD();
+
+/* ---------- ESTADO ---------- */
+const INST=[
+ {w:'MEF',f:'Ministerio de Economía y Finanzas',t:['medida'],p:'Dirige la política fiscal: presupuesto, impuestos y gasto público. La SUNAT depende de este sector.'},
+ {w:'BCRP',f:'Banco Central de Reserva del Perú',t:['medida'],p:'Cuida la estabilidad de la moneda y de los precios mediante la política monetaria.'},
+ {w:'SUNAT',f:'Superintendencia Nacional de Aduanas y de Administración Tributaria',t:['medida','sancion'],p:'Recauda impuestos, controla aduanas y comprobantes. Hace campañas, sorteos, incautaciones y multas.'},
+ {w:'SBS · UIF',f:'Superintendencia de Banca y Seguros · Unidad de Inteligencia Financiera',t:['medida'],p:'Supervisa bancos y seguros. La UIF recibe y analiza reportes de operaciones sospechosas de lavado de activos.'},
+ {w:'Indecopi',f:'Instituto Nacional de Defensa de la Competencia y de la Protección de la Propiedad Intelectual',t:['medida','sancion'],p:'Defiende la libre competencia y al consumidor. Investiga y multa a cárteles.'},
+ {w:'SMV',f:'Superintendencia del Mercado de Valores',t:['medida','sancion'],p:'Supervisa el mercado de valores y puede sancionar a quienes captan dinero sin autorización.'},
+ {w:'Fiscalía',f:'Ministerio Público',t:['sancion'],p:'Investiga los delitos y acusa ante el juez. Tiene fiscalías especializadas en delitos económicos.'},
+ {w:'Policía',f:'Policía Nacional del Perú',t:['sancion'],p:'Hace operativos, intercepta carga ilegal y apoya las investigaciones de la Fiscalía.'},
+ {w:'Poder Judicial',f:'Jueces y tribunales',t:['sancion'],p:'Juzga los casos y dicta la sentencia: culpabilidad, pena y reparación.'},
+ {w:'MTC y puertos',f:'Ministerio de Transportes y Comunicaciones',t:['medida'],p:'Impulsa carreteras, puertos y logística que conectan mercados, como el hub de Matarani y Corío.'},
+ {w:'Contraloría y OSCE',f:'Control y compras públicas',t:['medida','sancion'],p:'Vigilan que el dinero público se gaste con transparencia y que las compras sean competitivas.'},
+ {w:'Gobierno Regional y Municipalidad',f:'Niveles regional y local',t:['medida'],p:'Promueven producción y obras, otorgan licencias y fiscalizan los mercados de su territorio.'}
+];
+let ifil='todas';
+const FL=[['todas','Todas'],['medida','Previenen y promueven'],['sancion','Investigan y sancionan']];
+FL.forEach(([k,l])=>{const b=el('button','btn',l);b.dataset.k=k;b.onclick=()=>{ifil=k;drawI()};$('#instFilter').appendChild(b)});
+INST.forEach(i=>{const d=el('div','inst',`<div class="row">${i.t.map(t=>t==='medida'?'<span class="tag">Medida</span>':'<span class="tag bad">Sanción</span>').join('')}</div><div class="who">${i.w}</div><p><b>${i.f}</b></p><p>${i.p}</p>`);d.dataset.t=i.t.join(' ');$('#insts').appendChild(d)});
+function drawI(){$$('#instFilter .btn').forEach(b=>b.classList.toggle('on',b.dataset.k===ifil));$$('#insts .inst').forEach(d=>d.classList.toggle('dim',ifil!=='todas'&&!d.dataset.t.includes(ifil)))}
+drawI();
+
+const GOV=[
+ {n:'Nacional',t:'Gobierno nacional',p:'Tres poderes: el Ejecutivo (ministerios y organismos como SUNAT, SBS e Indecopi) aplica las políticas; el Legislativo hace las leyes; el Judicial juzga. Fija las reglas para todo el país.'},
+ {n:'Regional',t:'Gobierno Regional de Arequipa',p:'Promueve el desarrollo en su región: producción, infraestructura y coordinación con los municipios. No puede cambiar las leyes nacionales, pero las ejecuta en su territorio.'},
+ {n:'Local',t:'Municipalidad distrital de Cerro Colorado',p:'Es el gobierno más cercano a los mercados: da licencias, vigila la higiene y el orden, y cuida los espacios comunes. Puede reportar lo que ve a las autoridades nacionales.'}
+];
+let gv=0;GOV.forEach((g,i)=>{const b=el('button','btn',g.n);b.onclick=()=>{gv=i;drawG()};$('#govBtns').appendChild(b)});
+function drawG(){$$('#govBtns .btn').forEach((b,i)=>b.classList.toggle('on',i===gv));const g=GOV[gv];$('#govPanel').innerHTML=`<h3 style="font-size:1.1rem">${g.t}</h3><p style="margin-top:8px">${g.p}</p>`}
+drawG();
+
+const FLOW=[
+ {n:'1 Detectar',t:'Operativo o reporte',p:'La SUNAT, con la Policía, intercepta un camión o revisa un almacén y encuentra mercadería sin documentos. También puede llegar una denuncia de un comerciante o consumidor.'},
+ {n:'2 Incautar',t:'Se asegura la mercadería',p:'Se incauta la carga y se levanta un acta. Es el primer golpe: el producto ilegal sale del mercado.'},
+ {n:'3 Investigar',t:'Vía administrativa o penal',p:'Según la gravedad, la SUNAT aplica sanciones administrativas (comiso, multa) o el caso pasa a la Fiscalía, que investiga y reúne pruebas.'},
+ {n:'4 Sancionar',t:'Decisión final',p:'Si es un caso penal, el Poder Judicial juzga y puede imponer cárcel, multas y decomiso. El mensaje a los mercados: el delito no compensa.'}
+];
+let fl=0;FLOW.forEach((f,i)=>{const b=el('button','',f.n);b.onclick=()=>{fl=i;drawF()};$('#flowBtns').appendChild(b)});
+function drawF(){$$('#flowBtns button').forEach((b,i)=>b.classList.toggle('on',i===fl));const f=FLOW[fl];$('#flowPanel').innerHTML=`<h3 style="font-size:1.1rem">${f.t}</h3><p style="margin-top:8px">${f.p}</p>`}
+drawF();
+
+/* ---------- MEDIDAS ---------- */
+const MED=[
+ {n:'Tributaria',t:'Sorteo de comprobantes electrónicos',p:'La SUNAT premia a quien pide su comprobante. Así, más ventas quedan registradas y más impuestos llegan al Estado.',c:'Si más compradores piden boleta, el vendedor informal pierde ventaja y el negocio formal compite mejor.',e:'Más de 85 mil personas ya se habían inscrito en el sorteo, con premios de hasta S/100 mil (RPP, 2026).'},
+ {n:'Aduanera',t:'Campañas de prevención del contrabando',p:'La SUNAT informa a comerciantes y compradores sobre los riesgos del contrabando y refuerza los controles en la región.',c:'Protege al comerciante honesto de la competencia desleal y al consumidor de productos sin control.',e:'Campaña de la SUNAT en la región Arequipa (Andina).'},
+ {n:'Infraestructura',t:'Hub portuario Matarani–Corío',p:'Mejorar puertos y logística para que los productos del sur salgan y entren más rápido y barato.',c:'Tu negocio llega a más mercados con menos costo y menos riesgo de rutas informales.',e:'Gestión analiza lo que se impulsaría con Matarani y Corío.'},
+ {n:'Monetaria',t:'Estabilidad de precios (BCRP)',p:'El Banco Central cuida que la moneda no pierda valor rápidamente, ajustando la tasa de interés de referencia.',c:'Con precios estables, el comerciante puede planificar compras y ventas sin sustos.',e:'Medida general del Estado peruano a través del BCRP.'},
+ {n:'Financiera',t:'Vigilancia de operaciones sospechosas',p:'Bancos y entidades reportan movimientos extraños a la UIF, que los analiza para detectar lavado de activos.',c:'El dinero ilegal no se mezcla con el dinero de los negocios honestos.',e:'Gestión explica cómo trabaja la UIF de la SBS.'}
+];
+let mv=0;MED.forEach((m,i)=>{const b=el('button','btn',m.n);b.onclick=()=>{mv=i;drawM()};$('#medBtns').appendChild(b)});
+function drawM(){$$('#medBtns .btn').forEach((b,i)=>b.classList.toggle('on',i===mv));const m=MED[mv];$('#medPanel').innerHTML=`<h3 style="font-size:1.25rem;margin-bottom:8px">${m.t}</h3><p>${m.p}</p><dl class="kv"><div><dt>Cómo cuida tu negocio</dt><dd>${m.c}</dd></div><div><dt>Fuente o ejemplo</dt><dd>${m.e}</dd></div></dl>`}
+drawM();
+
+const GAME=[
+ ['Sorteo de la SUNAT para quien pide comprobante','m','Es un incentivo para que los mercados funcionen formalmente.'],
+ ['Incautar cigarrillos de contrabando','s','Se quita la mercadería ilegal y se castiga a quien la movía.'],
+ ['Campaña para prevenir el contrabando','m','Prevenir es parte de la política económica.'],
+ ['Multa a empresas por pactar precios','s','El Indecopi sanciona a los cárteles.'],
+ ['Mejorar el puerto y las carreteras del sur','m','Facilita la integración y reduce los costos.'],
+ ['Reportar operaciones sospechosas a la UIF','m','Es prevención y detección. La sanción la deciden Fiscalía y jueces.'],
+ ['Cárcel por lavado de activos tras sentencia','s','Es el castigo penal que impone el Poder Judicial.'],
+ ['El BCRP cuida que los precios no suban sin control','m','Es política monetaria: protege a todos.']
+];
+let gscore=0,gdone=0;
+GAME.forEach(([t,a,why],i)=>{
+ const d=el('div','item',`<div>${t}<small hidden></small></div><div class="row"><button class="btn" data-a="m">Medida</button><button class="btn" data-a="s">Sanción</button></div>`);
+ $$('button',d).forEach(b=>b.onclick=()=>{
+  if(d.dataset.done)return;d.dataset.done=1;const ok=b.dataset.a===a;gdone++;if(ok)gscore++;
+  d.classList.add(ok?'ok':'no');const s=$('small',d);s.hidden=false;s.textContent=(ok?'Correcto. ':'Casi. ')+why+(ok?'':' Era '+(a==='m'?'medida.':'sanción.'));
+  $$('button',d).forEach(x=>x.disabled=true);
+  $('#gameScore').textContent=`Aciertos: ${gscore} de ${gdone}${gdone===GAME.length?(gscore===GAME.length?'. Perfecto.':'. Repasa las explicaciones.'):''}`;
+ });
+ $('#game').appendChild(d);
+});
+
+/* ---------- DESARROLLO ---------- */
+const BARS=[['Competencia justa entre negocios',[25,85]],['Recaudación para colegios, hospitales y obras',[30,80]],['Empleo formal',[35,75]],['Confianza para invertir',[25,80]],['Precios estables y productos seguros',[40,85]]];
+BARS.forEach(([l,v],i)=>{$('#bars').appendChild(el('div','bar',`<div class="lab"><span>${l}</span><span class="v" id="bv${i}" style="font-family:var(--mono)"></span></div><div class="track"><div class="fill" id="bf${i}"></div></div>`))});
+let sc=0;
+function drawBars(){BARS.forEach(([l,v],i)=>{$('#bf'+i).style.width=v[sc]+'%';$('#bf'+i).classList.toggle('good',sc===1);$('#bv'+i).textContent=v[sc]+'/100'});
+ $('#scNo').classList.toggle('on',sc===0);$('#scYes').classList.toggle('on',sc===1);$('#scNo').setAttribute('aria-pressed',sc===0);$('#scYes').setAttribute('aria-pressed',sc===1);drawChain()}
+$('#scNo').onclick=()=>{sc=0;chainN=1;drawBars()};$('#scYes').onclick=()=>{sc=1;chainN=1;drawBars()};
+const CH=[
+ ['Entra contrabando y se vende sin impuestos','Se descubre el contrabando y se sanciona'],
+ ['El producto ilegal cuesta menos que el legal','Se incauta la mercadería y el precio vuelve a ser parejo'],
+ ['El comerciante formal pierde ventas y recorta personal','El comerciante formal mantiene sus ventas y su personal'],
+ ['El Estado recauda menos impuestos','El Estado recauda y mantiene sus ingresos'],
+ ['Hay menos dinero para escuelas, salud y carreteras','Hay dinero para escuelas, salud, carreteras y puertos'],
+ ['Los mercados se debilitan y baja la confianza para invertir','Los mercados crecen y hay confianza para invertir. El desarrollo se sostiene']
+];
+let chainN=1;
+function drawChain(){const ul=$('#chain');ul.className='chain'+(sc?' good':'');ul.innerHTML='';for(let i=0;i<chainN;i++)ul.appendChild(el('li','',CH[i][sc]));
+ $('#chainTitle').textContent=sc?'Cadena con medidas y sanciones':'Cadena sin medidas ni sanciones';
+ $('#chainNext').disabled=chainN>=CH.length;$('#chainNext').textContent=chainN>=CH.length?'Cadena completa':'Mostrar siguiente consecuencia'}
+$('#chainNext').onclick=()=>{if(chainN<CH.length){chainN++;drawChain()}};
+drawBars();
+
+
+const CD={g:{t:'Crecimiento económico',p:'Aumento de lo que produce y vende un país en un periodo. Se mide con indicadores como el PBI.',l:['Se enfoca en la cantidad de dinero y producción.','Puede crecer aunque mucha gente quede sin empleo digno.','Puede basarse en actividades ilegales o que dañan el ambiente.'],e:'Un mercado vende más, pero con mercadería de contrabando y sin pagar impuestos.'},
+ d:{t:'Desarrollo',p:'Mejora de la calidad de vida de las personas, de forma justa y duradera.',l:['Incluye empleo formal, educación, salud, seguridad e igualdad de oportunidades.','Exige reglas que se cumplan y competencia justa.','Cuida los recursos para las próximas generaciones.'],e:'Un mercado vende más, paga impuestos, genera empleo con derechos y esos impuestos construyen escuelas y postas.'}};
+function drawCD(k){const x=CD[k];$('#cdG').classList.toggle('on',k==='g');$('#cdD').classList.toggle('on',k==='d');$('#cdG').setAttribute('aria-pressed',k==='g');$('#cdD').setAttribute('aria-pressed',k==='d');
+ $('#cdPanel').innerHTML=`<h3 style="font-size:1.2rem;color:var(--${k==='g'?'warm':'good'})">${x.t}</h3><p style="margin-top:6px">${x.p}</p><ul style="margin:10px 0;padding-left:20px;display:grid;gap:4px">${x.l.map(i=>'<li>'+i+'</li>').join('')}</ul><p><b>Ejemplo:</b> ${x.e}</p>`}
+$('#cdG').onclick=()=>drawCD('g');$('#cdD').onclick=()=>drawCD('d');drawCD('g');
+
+const DIM=[
+ {n:'Económica',q:'Que los negocios produzcan, vendan y crezcan con reglas parejas, hoy y mañana.',b:'Negocios formales que compiten con precio y calidad, y pagan sus impuestos.',m:'Contrabando y evasión: quien no paga impuestos vende más barato y saca del mercado a quien sí cumple.',e:'SUNAT controla aduanas y comprobantes; Indecopi cuida la libre competencia; el BCRP cuida la estabilidad de los precios.'},
+ {n:'Social',q:'Que el progreso llegue a todas las personas, con empleo digno, salud y educación.',b:'Trabajadores con contrato y seguro, y colegios y postas financiados con impuestos.',m:'Informalidad y estafas: sin impuestos hay menos servicios y las familias pierden sus ahorros.',e:'MEF y gobiernos regionales y locales invierten lo recaudado; la SBS y la SMV protegen el ahorro de las personas.'},
+ {n:'Ambiental',q:'Que se usen los recursos de hoy sin agotarlos ni contaminarlos para el futuro.',b:'Producir y extraer recursos con permisos y cuidando el agua, el suelo y el aire.',m:'Actividades ilegales como la minería ilegal o el tráfico de productos sin control, que contaminan y no se pueden fiscalizar.',e:'Las autoridades ambientales y la Fiscalía fiscalizan y sancionan; las licencias y los controles obligan a producir con reglas.'},
+ {n:'Institucional',q:'Que las instituciones funcionen y generen confianza para invertir y convivir.',b:'Autoridades que previenen, investigan y sancionan de forma transparente.',m:'Corrupción y lavado de activos: el dinero ilegal compra decisiones y debilita la confianza.',e:'Fiscalía y Poder Judicial investigan y sancionan; la Contraloría y el OSCE vigilan el gasto público; la UIF analiza el dinero sospechoso.'}];
+let dm=0;DIM.forEach((d,i)=>{const b=el('button','btn',d.n);b.onclick=()=>{dm=i;drawDim()};$('#dimBtns').appendChild(b)});
+function drawDim(){$$('#dimBtns .btn').forEach((b,i)=>b.classList.toggle('on',i===dm));const d=DIM[dm];
+ $('#dimPanel').innerHTML=`<p style="font-size:1.05rem"><b>${d.n}:</b> ${d.q}</p><div class="grid3" style="margin-top:12px"><div class="inst"><span class="tag good">Cuando se cuida</span><p>${d.b}</p></div><div class="inst"><span class="tag bad">Lo que lo amenaza</span><p>${d.m}</p></div><div class="inst"><span class="tag">Qué hace el Estado</span><p>${d.e}</p></div></div>`}
+drawDim();
+
+const ODS=[
+ {n:'ODS 8',t:'Trabajo decente y crecimiento económico',p:'Promover un crecimiento que genere empleo digno y formal. El contrabando y la informalidad lo debilitan.'},
+ {n:'ODS 9',t:'Industria, innovación e infraestructura',p:'Construir infraestructura y apoyar a la industria. Puertos, carreteras y logística, como el hub de Matarani y Corío, conectan mercados.'},
+ {n:'ODS 12',t:'Producción y consumo responsables',p:'Producir y consumir de forma responsable. Pedir comprobante y evitar productos ilegales es consumo responsable.'},
+ {n:'ODS 16',t:'Paz, justicia e instituciones sólidas',p:'Contar con instituciones transparentes que combatan la corrupción y los delitos. Es el objetivo más ligado a las sanciones.'},
+ {n:'ODS 11',t:'Ciudades y comunidades sostenibles',p:'Hacer ciudades y comunidades seguras y ordenadas. Los mercados ordenados y formales aportan a ese objetivo.'},
+ {n:'ODS 17',t:'Alianzas para lograr los objetivos',p:'Trabajar juntos entre instituciones, países y ciudadanía. Controlar fronteras y comercio exige cooperación.'}];
+let od=0;ODS.forEach((o,i)=>{const b=el('button','dcard',`<b>${o.n}</b><span>${o.t}</span>`);b.onclick=()=>{od=i;drawOds()};$('#odsCards').appendChild(b)});
+function drawOds(){$$('#odsCards .dcard').forEach((b,i)=>b.classList.toggle('on',i===od));const o=ODS[od];$('#odsPanel').innerHTML=`<h3 style="font-size:1.2rem">${o.n}: ${o.t}</h3><p style="margin-top:6px">${o.p}</p>`}
+drawOds();
+
+/* ---------- QUIZ ---------- */
+const QZ=[
+ ['¿Qué significa que los mercados se integran?','Que productores, comerciantes y compradores de distintos lugares se conectan e intercambian bienes y servicios',['Que todos los mercados venden lo mismo','Que el Estado cierra los mercados pequeños','Que cada mercado produce todo lo que necesita'],'Integrarse es conectarse: lo que un mercado ofrece lo necesita otro.'],
+ ['En el esquema de la sesión, ¿qué pasa cuando un delito rompe un mercado?','Lo sienten también los mercados conectados a él',['Solo lo siente ese mercado','Nadie lo nota','Los precios siempre bajan para todos'],'Los mercados forman una red: un golpe en un punto se propaga.'],
+ ['¿Cuál de estos es un delito económico o financiero?','Lavado de activos',['Pedir boleta al comprar','Pagar impuestos a tiempo','Participar en el sorteo de la SUNAT'],'El lavado de activos esconde el origen ilegal del dinero.'],
+ ['¿Qué institución investiga y multa a los cárteles que pactan precios?','Indecopi',['El BCRP','La Municipalidad de Cerro Colorado','La Contraloría'],'El Indecopi defiende la libre competencia.'],
+ ['El sorteo de comprobantes electrónicos de la SUNAT es…','Una medida de política económica',['Una sanción penal','Un delito','Un cártel'],'Incentiva que se pida comprobante: previene la informalidad.'],
+ ['¿Quién recibe y analiza los reportes de operaciones sospechosas de lavado de activos?','La UIF de la SBS',['Indecopi','El Gobierno Regional','El Poder Judicial'],'La Unidad de Inteligencia Financiera analiza esos reportes.'],
+ ['¿Por qué el contrabando perjudica el desarrollo?','Porque baja la recaudación y deja en desventaja a los negocios formales',['Porque aumenta los impuestos de todos','Porque mejora la calidad de los productos','Porque no afecta a los mercados regionales'],'Menos impuestos significa menos obras y servicios; además, la competencia es desleal.'],
+ ['¿Cuál es el nivel de integración que incluye aduanas y fronteras?','Internacional',['Local','Solo regional','Ninguno'],'Las aduanas controlan lo que entra y sale del país.'],
+ ['¿Qué es la sostenibilidad?','Mejorar la vida hoy sin quitarles posibilidades a las generaciones futuras',['Crecer lo más rápido posible sin mirar el ambiente','Que el Estado venda todos los recursos','Que los negocios no paguen impuestos'],'La idea viene del Informe Brundtland (1987).'],
+ ['¿Qué diferencia a un delito financiero de uno económico?','El financiero afecta al dinero y al sistema financiero, como el lavado de activos',['El financiero solo ocurre en el campo','El financiero no tiene sanción','No hay ninguna diferencia'],'Ambos dañan la economía, pero el financiero se centra en dinero, bancos e inversiones.'],
+ ['¿Qué hace el Estado cuando un delito se comprueba en un caso penal?','El Poder Judicial juzga y puede imponer cárcel, multa y decomiso',['La municipalidad cierra el mercado entero','El BCRP dicta la pena','Nada, porque es un asunto privado'],'Los jueces del Poder Judicial dictan la sentencia.']
+];
+let qi=0,qs=0;
+function drawQ(){
+ const b=$('#quizBox');
+ if(qi>=QZ.length){const m=qs>=QZ.length-1?'Excelente. Dominas el tema.':qs>=6?'Muy bien. Repasa lo que fallaste.':'Vuelve a recorrer las secciones y prueba otra vez.';b.innerHTML=`<div class="progress"><i style="width:100%"></i></div><h3 style="font-size:1.5rem">Resultado: ${qs} de ${QZ.length}</h3><p style="margin:10px 0 16px">${m}</p><button class="btn on" id="qr">Intentar de nuevo</button>`;$('#qr').onclick=()=>{qi=0;qs=0;drawQ()};return}
+ const [q,ok,bad,why]=QZ[qi];const opts=[ok,...bad].map((t,i)=>({t,ok:i===0}));
+ opts.sort((a,b)=>((a.t.length*7+qi)%5)-((b.t.length*7+qi)%5)||a.t.localeCompare(b.t));
+ b.innerHTML=`<div class="progress"><i style="width:${qi/QZ.length*100}%"></i></div><p class="note">Pregunta ${qi+1} de ${QZ.length}</p><h3 style="margin-top:6px;font-size:1.3rem">${q}</h3><div id="opts"></div><div id="fb" style="margin-top:14px" aria-live="polite"></div>`;
+ opts.forEach(o=>{const bt=el('button','opt',o.t);bt.onclick=()=>{
+  $$('#opts .opt').forEach((x,j)=>{x.disabled=true;if(opts[j].ok)x.classList.add('ok')});
+  if(o.ok)qs++;else bt.classList.add('no');
+  $('#fb').innerHTML=`<p><b>${o.ok?'Correcto. ':'No es esa. '}</b>${why}</p><button class="btn on" id="qn" style="margin-top:12px">${qi===QZ.length-1?'Ver resultado':'Siguiente'}</button>`;
+  $('#qn').onclick=()=>{qi++;drawQ()};$('#qn').focus();
+ };$('#opts').appendChild(bt)});
+}
+drawQ();
+
+/* ---------- GLOSARIO ---------- */
+const GL=[["Mercados", "Mercado", "Lugar físico o virtual donde se encuentran quienes ofrecen y quienes demandan productos y servicios.", "El mercado de Cerro Colorado, donde familias compran verduras y abarrotes."], ["Mercados", "Integración de mercados", "Conexión entre mercados de distintos lugares que se intercambian productos, servicios y dinero.", "La cebolla de Majes llega a Puno y la quinua de Puno llega a Arequipa."], ["Mercados", "Oferta", "Cantidad de productos o servicios que los vendedores ponen a la venta.", "Un productor ofrece 50 sacos de cebolla."], ["Mercados", "Demanda", "Cantidad de productos o servicios que los compradores quieren y pueden comprar.", "Las familias de Arequipa buscan cebolla cada semana."], ["Mercados", "Insumo", "Materia prima o producto que se usa para fabricar o preparar otro producto.", "La leche es insumo para hacer queso."], ["Mercados", "Cadena de valor", "Conjunto de pasos por los que pasa un producto desde su origen hasta el consumidor.", "Cultivo, transporte, almacenamiento, venta y pago."], ["Mercados", "Logística", "Organización del transporte, almacenamiento y entrega de productos.", "Camiones, almacenes y puertos como Matarani."], ["Mercados", "Comercio exterior", "Compra y venta de productos con otros países: importaciones y exportaciones.", "Minerales que salen por puerto y productos que llegan por aduana."], ["Mercados", "Frontera y aduana", "La frontera separa países; la aduana controla qué entra y sale y cobra los tributos correspondientes.", "Los camiones que cruzan hacia o desde Bolivia o Chile pasan por control aduanero."], ["Mercados", "Competencia", "Situación en que varios negocios compiten por los mismos clientes con precio, calidad y servicio.", "Dos puestos de frutas que mejoran su atención para vender más."], ["Mercados", "Informalidad", "Actividad económica que no cumple con registros, impuestos ni normas laborales.", "Un puesto que vende sin boleta ni licencia."], ["Delitos", "Delito económico", "Acto ilegal que daña el orden económico: producción, comercio, tributos o competencia.", "Contrabando, evasión de impuestos, cárteles."], ["Delitos", "Delito financiero", "Acto ilegal que afecta al dinero y al sistema financiero: bancos, inversiones, créditos y transferencias.", "Lavado de activos, estafas con promesas de ganancias, fraude con tarjetas."], ["Delitos", "Contrabando", "Meter o sacar mercadería sin pasar por la aduana ni pagar los tributos.", "Cigarrillos que ingresan sin declararse."], ["Delitos", "Evasión tributaria", "No pagar impuestos que corresponden, ocultando ventas o ingresos.", "Vender sin dar comprobante para no declarar la venta."], ["Delitos", "Comprobante de pago", "Boleta o factura que prueba una venta y permite registrar los impuestos.", "La boleta electrónica que pides en una bodega."], ["Delitos", "Lavado de activos", "Hacer pasar dinero de origen ilegal como si fuera legal.", "Depositar dinero ilegal en un negocio de fachada."], ["Delitos", "Operación sospechosa", "Movimiento de dinero que no parece corresponder a la actividad de la persona o empresa.", "Depósitos muy altos en la cuenta de un negocio pequeño."], ["Delitos", "Colusión o cártel", "Acuerdo entre competidores para fijar precios o repartirse clientes.", "Empresas que se ponen de acuerdo para subir el precio de un producto."], ["Delitos", "Competencia desleal", "Ventajas obtenidas de forma injusta o ilegal frente a otros negocios.", "Vender producto de contrabando más barato que el legal."], ["Delitos", "Estafa", "Engañar a otra persona para obtener dinero o beneficios.", "Una falsa inversión que promete duplicar tu dinero."], ["Delitos", "Corrupción", "Uso indebido del poder o del dinero público para beneficio personal.", "Pagar a un funcionario para ganar una obra."], ["Estado", "Estado", "Conjunto de instituciones que organizan y dirigen la vida pública de un país.", "Poderes Ejecutivo, Legislativo y Judicial, con gobiernos nacional, regional y local."], ["Estado", "Política económica", "Conjunto de decisiones del Estado para orientar la economía: gasto, impuestos, moneda, comercio.", "Invertir en un puerto o regular los precios del crédito."], ["Estado", "Medida de política económica", "Acción del Estado para orientar, incentivar o proteger la economía.", "El sorteo de comprobantes electrónicos de la SUNAT."], ["Estado", "Sanción", "Castigo por una infracción o un delito.", "Multa, comiso, cierre de local o cárcel."], ["Estado", "Tributo o impuesto", "Pago obligatorio que hacen personas y empresas al Estado para financiar servicios públicos.", "El IGV que se paga al comprar un producto."], ["Estado", "Incautación o comiso", "Retiro de bienes que se usaron o movieron de forma ilegal.", "Quitar un cargamento de mercadería de contrabando."], ["Estado", "Fiscalización", "Revisión que hace una autoridad para comprobar que se cumplan las normas.", "Inspección de comprobantes en un mercado."], ["Estado", "Política monetaria", "Decisiones sobre el dinero y las tasas de interés para mantener estables los precios.", "Lo que hace el Banco Central de Reserva."], ["Desarrollo", "Desarrollo económico", "Mejora sostenida de la producción, el empleo y los ingresos de un país.", "Más negocios formales que crean más empleo."], ["Desarrollo", "Sostenibilidad", "Desarrollo que mejora la vida hoy sin quitarles posibilidades a las próximas generaciones.", "Producir y comerciar cuidando recursos y respetando las reglas."], ["Desarrollo", "Recaudación", "Dinero que el Estado obtiene de los impuestos.", "Con ese dinero se pagan escuelas y hospitales."], ["Desarrollo", "Empleo formal", "Trabajo con contrato, beneficios y seguridad social.", "Un trabajador con boleta de pago y seguro de salud."], ["Desarrollo", "Bien común", "Lo que conviene a toda la comunidad y no solo a una persona.", "Cuidar el mercado del distrito para que todos compren y vendan seguros."], ["Desarrollo", "Confianza económica", "Seguridad de que las reglas se cumplen, lo que anima a invertir y comprar.", "Un inversionista abre un negocio porque sabe que se sancionan los delitos."], ["Desarrollo", "Desarrollo humano", "Ampliación de las oportunidades de las personas para vivir una vida larga, saludable y con educación e ingresos dignos.", "Una familia con acceso a salud, escuela y empleo formal."], ["Desarrollo", "Crecimiento económico", "Aumento de la producción y las ventas de un país en un periodo.", "Que el PBI suba, aunque no todos mejoren su calidad de vida."], ["Desarrollo", "Generaciones futuras", "Personas que vivirán después de nosotros y que también necesitan recursos y oportunidades.", "Los niños de hoy y sus hijos."], ["Desarrollo", "ODS (Objetivos de Desarrollo Sostenible)", "17 metas mundiales de la ONU para el año 2030 sobre pobreza, trabajo, ambiente, justicia y más.", "El ODS 16 busca instituciones sólidas que combatan la corrupción."], ["Desarrollo", "Agenda 2030", "Plan mundial de la ONU, aprobado en 2015, que contiene los 17 ODS.", "Los países reportan sus avances hacia las metas."], ["Desarrollo", "Inclusión social", "Que todas las personas tengan acceso a las mismas oportunidades y servicios.", "Un colegio y una posta en cada distrito."], ["Desarrollo", "Infraestructura", "Obras que permiten que la economía funcione: carreteras, puertos, energía, agua.", "El puerto de Matarani."], ["Desarrollo", "Dimensiones de la sostenibilidad", "Los cuatro aspectos que se cuidan para que el desarrollo dure: económico, social, ambiental e institucional.", "Un mercado formal cuida empleo, ambiente y reglas a la vez."]];
+let gcat='Todos';
+['Todos','Mercados','Delitos','Estado','Desarrollo'].forEach(c=>{const b=el('button','btn',c);b.dataset.c=c;b.onclick=()=>{gcat=c;drawGl()};$('#gf').appendChild(b)});
+$('#gq').addEventListener('input',drawGl);
+function drawGl(){
+ const q=$('#gq').value.trim().toLowerCase();
+ $$('#gf .btn').forEach(b=>b.classList.toggle('on',b.dataset.c===gcat));
+ const r=GL.filter(t=>(gcat==='Todos'||t[0]===gcat)&&(!q||(t[1]+' '+t[2]+' '+t[3]).toLowerCase().includes(q))).sort((a,b)=>a[1].localeCompare(b[1],'es'));
+ $('#glos').innerHTML='';
+ r.forEach(t=>$('#glos').appendChild(el('details','',`<summary>${t[1]} <span class="tag" style="margin-left:6px">${t[0]}</span></summary><p>${t[2]}</p><p><b>Ejemplo:</b> ${t[3]}</p>`)));
+ $('#gcount').textContent=r.length?r.length+' términos':'No hay términos con esa búsqueda.';
+}
+drawGl();
+
+</script>
+
+</body></html>
